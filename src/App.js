@@ -4,8 +4,11 @@ import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
+import Clarifai from 'clarifai';
 
 import './App.css';
+
+const app = new Clarifai.App({apiKey: 'API_KEY'})
 
 const particleOptions = {
   particles: {
@@ -27,6 +30,24 @@ const particleOptions = {
 }
 
 class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      input: '',
+    };
+  }
+  onInputChange = event => {
+    console.log(event.target.value);
+  }
+  onButtonSubmit = () => {
+    app.models.predict(Clarifai.GENERAL_MODEL, 'https://samples.clarifai.com/metro-north.jpg')
+    .then(response => {
+      console.log(response);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  }
   render() {
     return (
       <div className="App">
@@ -37,7 +58,7 @@ class App extends React.Component {
         <Navigation />
         <Logo />
         <Rank />
-        <ImageLinkForm />
+        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
         {/* <FaceRecognition /> */}
       </div>
     );

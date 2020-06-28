@@ -9,8 +9,8 @@ class ImageLinkForm extends React.Component {
                 </p>
                 <div className='center'>
                     <div className='form center pa4 br3 shadow-5'>
-                        <input className='f4 pa2 w-70 center' type='text' />
-                        <button className='w-30 grow link f4 ph3 pv2 dib white bg-light-purple'>{'Detect'}</button>
+                        <input className='f4 pa2 w-70 center' type='text' onChange={this.props.onInputChange}/>
+                        <button className='w-30 grow link f4 ph3 pv2 dib white bg-light-purple' onClick={this.props.onButtonSubmit}>{'Detect'}</button>
                     </div>
                 </div>
             </div>
