@@ -5,11 +5,12 @@ import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
+import Signin from './components/Signin/Signin';
 import Clarifai from 'clarifai';
 
 import './App.css';
 
-const app = new Clarifai.App({ apiKey: '3229240997814b818fb4439c70c05b88' })
+const app = new Clarifai.App({ apiKey: 'api_key' })
 
 const particleOptions = {
   particles: {
@@ -37,6 +38,7 @@ class App extends React.Component {
       input: '',
       imageUrl: '',
       boxes: [],
+      route: 'signin',
     };
   }
   calculateFaceBoundary = (data) => {
@@ -95,10 +97,16 @@ class App extends React.Component {
           className="particles"
         />
         <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-        <FaceRecognition imageUrl={this.state.imageUrl} boxes={this.state.boxes} />
+        {this.state.route === 'signin' ?
+          <Signin />
+          :
+          <div>
+            <Logo />
+            <Rank />
+            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+            <FaceRecognition imageUrl={this.state.imageUrl} boxes={this.state.boxes} />
+          </div>
+        }
       </div>
     );
   }
