@@ -4,11 +4,12 @@ import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
+import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Clarifai from 'clarifai';
 
 import './App.css';
 
-const app = new Clarifai.App({apiKey: 'API_KEY'})
+const app = new Clarifai.App({ apiKey: 'API_KEY' })
 
 const particleOptions = {
   particles: {
@@ -34,19 +35,35 @@ class App extends React.Component {
     super();
     this.state = {
       input: '',
+      imageUrl: '',
+      box: {},
     };
   }
   onInputChange = event => {
-    console.log(event.target.value);
+    const state = this.state;
+    const newState = {
+      ...state,
+      input: event.target.value,
+    };
+    this.setState(newState);
   }
   onButtonSubmit = () => {
-    app.models.predict(Clarifai.GENERAL_MODEL, 'https://samples.clarifai.com/metro-north.jpg')
-    .then(response => {
-      console.log(response);
+    const url = this.state.input;
+    const state = this.state;
+    const newState = {
+      ...state,
+      imageUrl: url,
+    };
+    this.setState(newState, () => {
+      console.log(this.state);
+      app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.imageUrl)
+        .then(response => {
+          console.log(response);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     })
-    .catch(err => {
-      console.log(err);
-    });
   }
   render() {
     return (
@@ -58,8 +75,8 @@ class App extends React.Component {
         <Navigation />
         <Logo />
         <Rank />
-        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-        {/* <FaceRecognition /> */}
+        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+        <FaceRecognition imageUrl={this.state.imageUrl} />
       </div>
     );
   }
