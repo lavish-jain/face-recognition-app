@@ -4,8 +4,8 @@ import './FaceRecognition.css'
 class FaceRecognition extends React.Component {
     renderBoxes() {
         const divs = [];
-        const boxes = this.props.boxes;
-        for(let box of boxes) {
+        const { boxes } = this.props;
+        for (let box of boxes) {
             const style = {
                 left: box.leftCol,
                 top: box.topRow,
@@ -17,10 +17,11 @@ class FaceRecognition extends React.Component {
         return divs;
     }
     render() {
+        const { imageUrl } = this.props;
         return (
             <div className='center ma'>
                 <div className='absolute mt2'>
-                    <img id='image' src={this.props.imageUrl} alt='' />
+                    <img id='image' src={imageUrl} alt='' />
                     {this.renderBoxes()}
                 </div>
             </div>
