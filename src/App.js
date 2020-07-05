@@ -135,6 +135,7 @@ class App extends React.Component {
       ...state,
       route,
       isSignedIn,
+      imageUrl: '',
     };
     this.setState(newState);
   }
