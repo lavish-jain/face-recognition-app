@@ -14,6 +14,19 @@ import './App.css';
 
 const app = new Clarifai.App({ apiKey: 'api_key' })
 
+const initialState = {
+  input: '',
+  imageUrl: '',
+  boxes: [],
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: '',
+  }
+};
+
 const particleOptions = {
   particles: {
     number: {
@@ -131,6 +144,9 @@ class App extends React.Component {
   onRouteChange = route => {
     const state = this.state;
     const isSignedIn = route === 'signin' || route === 'register' ? false : true;
+    if (!isSignedIn) {
+      this.setState(initialState);
+    }
     const newState = {
       ...state,
       route,
