@@ -1,6 +1,56 @@
 import React from 'react';
+import axios from 'axios';
+import { server } from '../../constants';
 
 class Signin extends React.Component {
+
+    constructor() {
+        super();
+        this.state = {
+            email: '',
+            password: '',
+        }
+    }
+
+    onEmailChange = (event) => {
+        const state = this.state;
+        const newState = {
+            ...state,
+            email: event.target.value,
+        }
+        this.setState(newState);
+    }
+    onPasswordChange = (event) => {
+        const state = this.state;
+        const newState = {
+            ...state,
+            password: event.target.value,
+        }
+        this.setState(newState);
+    }
+    authenticate = async (email, password) => {
+        const body = {
+            email,
+            password
+        }
+        try {
+            const response = await axios.post(`${server}/signin`, body);
+            return response.data;
+
+        } catch (err) {
+            return null;
+        }
+    }
+    onSubmitSignIn = async () => {
+        const user = await this.authenticate(this.state.email, this.state.password);
+        if (user) {
+            this.props.loadUser(user);
+            this.props.onRouteChange('home');
+        }
+        else {
+            console.log('Unauthorized');
+        }
+    }
     render() {
         const { onRouteChange } = this.props;
         return (
@@ -11,15 +61,15 @@ class Signin extends React.Component {
                             <legend className="f1 fw6 ph0 mh0">Sign In</legend>
                             <div className="mt3">
                                 <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-                                <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" id="email-address" />
+                                <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" id="email-address" onChange={this.onEmailChange} />
                             </div>
                             <div className="mv3">
                                 <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-                                <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password" id="password" />
+                                <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password" id="password" onChange={this.onPasswordChange} />
                             </div>
                         </fieldset>
                         <div className="">
-                            <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" onClick={() => onRouteChange('home')} type="submit" value="Sign in" />
+                            <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" onClick={this.onSubmitSignIn} type="submit" value="Sign in" />
                         </div>
                         <div className="lh-copy mt3">
                             <p className="f6 link dim black db pointer" onClick={() => onRouteChange('register')}>Register</p>

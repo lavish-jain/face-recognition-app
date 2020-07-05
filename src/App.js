@@ -8,6 +8,8 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
 import Clarifai from 'clarifai';
+import axios from 'axios';
+import { server } from './constants';
 import './App.css';
 
 const app = new Clarifai.App({ apiKey: 'api_key' })
@@ -40,7 +42,28 @@ class App extends React.Component {
       boxes: [],
       route: 'signin',
       isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: '',
+      }
     };
+  }
+  loadUser = user => {
+    const state = this.state;
+    const newState = {
+      ...state,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        entries: user.entries,
+        joined: user.joined,
+      }
+    }
+    this.setState(newState);
   }
   calculateFaceBoundary = (data) => {
     const boxes = [];
@@ -77,6 +100,17 @@ class App extends React.Component {
     };
     this.setState(newState);
   }
+  updateEntries = async () => {
+    const body = {
+      id: this.state.user.id,
+    };
+    try {
+      const response = await axios.put(`${server}/image`, body);
+      this.loadUser(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
   onButtonSubmit = () => {
     const { input } = this.state;
     const state = this.state;
@@ -87,7 +121,10 @@ class App extends React.Component {
     this.setState(newState, () => {
       const { imageUrl } = this.state;
       app.models.predict(Clarifai.FACE_DETECT_MODEL, imageUrl)
-        .then(response => this.displayFaceBox(this.calculateFaceBoundary(response.outputs[0].data.regions)))
+        .then(response => {
+          this.updateEntries();
+          this.displayFaceBox(this.calculateFaceBoundary(response.outputs[0].data.regions))
+        })
         .catch(err => { console.log(err); })
     });
   }
@@ -113,16 +150,16 @@ class App extends React.Component {
         {route === 'home' ?
           <div>
             <Logo />
-            <Rank />
+            <Rank name={this.state.user.name} entries={this.state.user.entries} />
             <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
             <FaceRecognition imageUrl={imageUrl} boxes={boxes} />
           </div>
           :
           (
             route === 'signin' ?
-              <Signin onRouteChange={this.onRouteChange} />
+              <Signin onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
               :
-              <Register onRouteChange={this.onRouteChange} />
+              <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
           )
         }
       </div>

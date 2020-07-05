@@ -5,6 +5,7 @@ class FaceRecognition extends React.Component {
     renderBoxes() {
         const divs = [];
         const { boxes } = this.props;
+        let key = 0;
         for (let box of boxes) {
             const style = {
                 left: box.leftCol,
@@ -12,7 +13,8 @@ class FaceRecognition extends React.Component {
                 right: box.rightCol,
                 bottom: box.bottomRow,
             }
-            divs.push(<div className='bounding-box' style={style}></div>);
+            divs.push(<div className='bounding-box' style={style} key={key}></div>);
+            key++;
         }
         return divs;
     }
