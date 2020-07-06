@@ -7,12 +7,9 @@ import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
-import Clarifai from 'clarifai';
 import axios from 'axios';
 import { server } from './constants';
 import './App.css';
-
-const app = new Clarifai.App({ apiKey: 'api_key' })
 
 const initialState = {
   input: '',
@@ -131,14 +128,14 @@ class App extends React.Component {
       ...state,
       imageUrl: input,
     };
-    this.setState(newState, () => {
+    this.setState(newState, async () => {
       const { imageUrl } = this.state;
-      app.models.predict(Clarifai.FACE_DETECT_MODEL, imageUrl)
-        .then(response => {
-          this.updateEntries();
-          this.displayFaceBox(this.calculateFaceBoundary(response.outputs[0].data.regions))
-        })
-        .catch(err => { console.log(err); })
+      const body = {
+        image_url: imageUrl
+      }
+      const response = await axios.post(`${server}/predictface`, body);
+      this.updateEntries();
+      this.displayFaceBox(this.calculateFaceBoundary(response.data.outputs[0].data.regions))
     });
   }
   onRouteChange = route => {
