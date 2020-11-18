@@ -26,10 +26,21 @@ jobs:
       run: echo Setting environment variables
       env:
         REACT_APP_SERVER_URL: ${{ secrets.REACT_APP_SERVER_URL }}
+
+    - name: installing envsub
+      run: npm install -g envsub
+
     - name: npm install, build, and test
       run: |
         npm install
         npm run build --if-present
+    
+    - name: Substituting environment variables
+      run: |
+        main_chunk=$(ls build/static/js/main.*.js)
+        envsub --env REACT_APP_SERVER_URL=${{ env.REACT_APP_SERVER_URL }}  $main_chunk ./main_chunk_temp
+        cp ./main_chunk_temp $main_chunk
+        rm ./main_chunk_temp
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
