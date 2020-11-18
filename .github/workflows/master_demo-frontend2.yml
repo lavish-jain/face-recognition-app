@@ -8,6 +8,8 @@ on:
     branches:
       - master
 
+env:
+  AZURE_WEBAPP_PACKAGE_PATH: 'build'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -28,7 +30,6 @@ jobs:
       run: |
         npm install
         npm run build --if-present
-        npm run test --if-present
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
@@ -36,4 +37,4 @@ jobs:
         app-name: 'demo-frontend2'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_a8f5e2ff21204f13989531c5c8591a94 }}
-        package: .
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
