@@ -9,7 +9,7 @@ on:
       - master
 
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: 'build'
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
