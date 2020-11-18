@@ -20,6 +20,10 @@ jobs:
       with:
         node-version: '10.x'
 
+    - name: Set up environment variables
+      run: echo Setting environment variables
+      env:
+        REACT_APP_SERVER_URL: ${{ secrets.REACT_APP_SERVER_URL }}
     - name: npm install, build, and test
       run: |
         npm install
