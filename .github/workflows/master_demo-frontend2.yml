@@ -34,7 +34,7 @@ jobs:
     - name: Substituting environment variables
       run: |
         main_chunk=$(ls build/static/js/main.*.js)
-        envsub --env REACT_APP_SERVER_URL=${{ env.REACT_APP_SERVER_URL }}  $main_chunk ./main_chunk_temp
+        envsub $main_chunk ./main_chunk_temp
         cp ./main_chunk_temp $main_chunk
         rm ./main_chunk_temp
 
