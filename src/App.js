@@ -7,8 +7,11 @@ import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
+import TelemetryProvider from './components/TelemetryProvider/TelemetryProvider';
 import axios from 'axios';
-import { server } from './constants';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
+import { getAppInsights } from './TelemetryService';
+import { server, appInsightsIKey } from './constants';
 import './App.css';
 
 const initialState = {
@@ -153,29 +156,32 @@ class App extends React.Component {
     this.setState(newState);
   }
   render() {
+    let appInsights = null;
     const { isSignedIn, imageUrl, boxes, route } = this.state;
     return (
       <div className="App">
-        <Particles
-          params={particleOptions}
-          className="particles"
-        />
-        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
-        {route === 'home' ?
-          <div>
-            <Logo />
-            <Rank name={this.state.user.name} entries={this.state.user.entries} />
-            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-            <FaceRecognition imageUrl={imageUrl} boxes={boxes} />
-          </div>
-          :
-          (
-            route === 'signin' ?
-              <Signin onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
-              :
-              <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
-          )
-        }
+        <TelemetryProvider instrumentationKey={appInsightsIKey} after={() => { appInsights = getAppInsights() }}>
+          <Particles
+            params={particleOptions}
+            className="particles"
+          />
+          <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
+          {route === 'home' ?
+            <div>
+              <Logo />
+              <Rank name={this.state.user.name} entries={this.state.user.entries} />
+              <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+              <FaceRecognition imageUrl={imageUrl} boxes={boxes} />
+            </div>
+            :
+            (
+              route === 'signin' ?
+                <Signin onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
+                :
+                <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
+            )
+          }
+        </TelemetryProvider>
       </div>
     );
   }
