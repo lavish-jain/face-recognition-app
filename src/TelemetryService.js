@@ -5,7 +5,10 @@ let reactPlugin = null;
 let appInsights = null;
 
 const createTelemetryService = () => {
-    const initialize = (instrumentationKey) => {
+    const initialize = (instrumentationKey, browserHistory) => {
+        if (!browserHistory) {
+            throw new Error('Could not initialize Telemetry Service');
+        }
         if (!instrumentationKey) {
             throw new Error('Instrumentation key not provided in ./src/telemetry-provider.jsx')
         }
@@ -14,7 +17,12 @@ const createTelemetryService = () => {
             config: {
                 instrumentationKey: instrumentationKey,
                 extensions: [reactPlugin],
-            }
+                extensionConfig: {
+                    [reactPlugin.identifier]: {
+                        history: browserHistory,
+                    },
+                },
+            },
         });
         appInsights.loadAppInsights();
     };
