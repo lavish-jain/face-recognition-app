@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { ai } from '../../TelemetryService';
 
 class TelemetryProvider extends React.Component {
@@ -21,7 +21,11 @@ class TelemetryProvider extends React.Component {
 
     render() {
         const { children } = this.props;
-        return ();
+        return (
+            <Fragment>
+                { children }
+            </Fragment>
+        );
     }
 }
 
