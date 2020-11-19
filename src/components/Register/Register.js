@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
 import { server } from '../../constants';
 
 class Register extends React.Component {
@@ -9,6 +10,7 @@ class Register extends React.Component {
             name: '',
             email: '',
             password: '',
+            redirect: false,
         }
     }
     onNameChange = (event) => {
@@ -47,6 +49,12 @@ class Register extends React.Component {
             if(response.data) {
                 this.props.loadUser(response.data);
                 this.props.onRouteChange('home');
+                const state = this.state;
+                const newState = {
+                    ...state,
+                    redirect: true,
+                }
+                this.setState(newState);
             }
         } catch (err) {
             console.log(err);
@@ -54,6 +62,12 @@ class Register extends React.Component {
 
     }
     render() {
+        const { redirect } = this.state;
+        if (redirect) {
+            return (
+                <Redirect to="/" />
+            )
+        }
         return (
             <article className="br3 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
                 <main className="pa4 black-80">

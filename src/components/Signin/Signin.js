@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { server } from '../../constants';
+import { Redirect } from 'react-router-dom';
 
 class Signin extends React.Component {
 
@@ -9,6 +10,7 @@ class Signin extends React.Component {
         this.state = {
             email: '',
             password: '',
+            redirect: false,
         }
     }
 
@@ -46,13 +48,25 @@ class Signin extends React.Component {
         if (user) {
             this.props.loadUser(user);
             this.props.onRouteChange('home');
+            const state = this.state;
+            const newState = {
+                ...state,
+                redirect: true,
+            }
+            this.setState(newState);
         }
         else {
             console.log('Unauthorized');
         }
     }
     render() {
-        const { onRouteChange } = this.props;
+        // const { onRouteChange } = this.props;
+        const { redirect } = this.state;
+        if (redirect) {
+            return (
+                <Redirect to='/'/>
+            )
+        }
         return (
             <article className="br3 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
                 <main className="pa4 black-80">
@@ -71,9 +85,9 @@ class Signin extends React.Component {
                         <div className="">
                             <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" onClick={this.onSubmitSignIn} type="submit" value="Sign in" />
                         </div>
-                        <div className="lh-copy mt3">
+                        {/* <div className="lh-copy mt3">
                             <p className="f6 link dim black db pointer" onClick={() => onRouteChange('register')}>Register</p>
-                        </div>
+                        </div> */}
                     </div>
                 </main >
             </article>

@@ -1,5 +1,6 @@
 import React from 'react';
 import Particles from 'react-particles-js';
+import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
@@ -155,32 +156,58 @@ class App extends React.Component {
     this.setState(newState);
   }
   render() {
-    const { isSignedIn, imageUrl, boxes, route } = this.state;
+    const { isSignedIn, imageUrl, boxes } = this.state;
     return (
-      <div className="App">
-        <TelemetryProvider instrumentationKey={ appInsightsIKey } after={() => {  getAppInsights() }}>
-          <Particles
-            params={particleOptions}
-            className="particles"
-          />
-          <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
-          {route === 'home' ?
-            <div>
-              <Logo />
-              <Rank name={this.state.user.name} entries={this.state.user.entries} />
-              <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-              <FaceRecognition imageUrl={imageUrl} boxes={boxes} />
-            </div>
-            :
-            (
-              route === 'signin' ?
+      <BrowserRouter>
+        <div className="App">
+          <TelemetryProvider instrumentationKey={ appInsightsIKey } after={() => {  getAppInsights() }}>
+            <Particles
+              params={particleOptions}
+              className="particles"
+            />
+            <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
+            <Switch>
+              <Route path="/signin" >
+                <Logo />
                 <Signin onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
-                :
-                <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
-            )
-          }
-        </TelemetryProvider>
-      </div>
+              </Route>
+              <Route path="/register">
+                <Logo />
+                <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />  
+              </Route> 
+              <Route exact path="/">
+                { isSignedIn ? 
+                                  <div>
+                                  <Logo />
+                                  <Rank name={this.state.user.name} entries={this.state.user.entries} />
+                                  <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+                                  <FaceRecognition imageUrl={imageUrl} boxes={boxes} />
+                                </div>
+                              :
+                              <Redirect to="/signin"/>
+              }
+
+              </Route>
+            </Switch>
+
+            {/* {route === 'home' ?
+              <div>
+                <Logo />
+                <Rank name={this.state.user.name} entries={this.state.user.entries} />
+                <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+                <FaceRecognition imageUrl={imageUrl} boxes={boxes} />
+              </div>
+              :
+              (
+                route === 'signin' ?
+                  <Signin onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
+                  :
+                  <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
+              )
+            } */}
+          </TelemetryProvider>
+        </div>
+      </BrowserRouter>
     );
   }
 
