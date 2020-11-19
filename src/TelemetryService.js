@@ -16,6 +16,8 @@ const createTelemetryService = () => {
         appInsights = new ApplicationInsights({
             config: {
                 instrumentationKey: instrumentationKey,
+                maxBatchInterval: 0,
+                disableFetchTracking: false,
                 extensions: [reactPlugin],
                 extensionConfig: {
                     [reactPlugin.identifier]: {
