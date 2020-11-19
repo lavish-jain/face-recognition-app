@@ -9,7 +9,6 @@ import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
 import TelemetryProvider from './components/TelemetryProvider/TelemetryProvider';
 import axios from 'axios';
-import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import { getAppInsights } from './TelemetryService';
 import { server, appInsightsIKey } from './constants';
 import './App.css';
@@ -156,11 +155,10 @@ class App extends React.Component {
     this.setState(newState);
   }
   render() {
-    let appInsights = null;
     const { isSignedIn, imageUrl, boxes, route } = this.state;
     return (
       <div className="App">
-        <TelemetryProvider instrumentationKey={appInsightsIKey} after={() => { appInsights = getAppInsights() }}>
+        <TelemetryProvider instrumentationKey={ appInsightsIKey } after={() => {  getAppInsights() }}>
           <Particles
             params={particleOptions}
             className="particles"
